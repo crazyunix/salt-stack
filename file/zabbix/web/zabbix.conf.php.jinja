@@ -1,0 +1,18 @@
+<?php
+global $DB;
+
+$DB["TYPE"]             = 'MYSQL';
+$DB["SERVER"]           = '{{ salt['pillar.get']('zabbix-frontend:dbhost', 'localhost') }}';
+$DB["PORT"]             = '3306';
+$DB["DATABASE"]         = '{{ salt['pillar.get']('zabbix-frontend:dbname', 'zabbix') }}';
+$DB["USER"]             = '{{ salt['pillar.get']('zabbix-frontend:dbuser', 'zabbixuser') }}';
+$DB["PASSWORD"]         = '{{ salt['pillar.get']('zabbix-frontend:dbpass', 'zabbixpass') }}';
+
+$DB["SCHEMA"]           = '';
+
+$ZBX_SERVER             = '{{ salt['pillar.get']('zabbix-frontend:zbxserver', 'localhost') }}';
+$ZBX_SERVER_PORT        = '{{ salt['pillar.get']('zabbix-frontend:zbxserverport', '10051') }}';
+$ZBX_SERVER_NAME        = '{{ salt['pillar.get']('zabbix-frontend:zbxservername', '') }}';
+
+$IMAGE_FORMAT_DEFAULT   = IMAGE_FORMAT_PNG;
+?>

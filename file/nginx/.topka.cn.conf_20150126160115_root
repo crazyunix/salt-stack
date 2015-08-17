@@ -1,0 +1,212 @@
+upstream topka_ruby {
+	server  unix:/data/website/rails/shared/tmp/sockets/unicorn.socket;
+	}
+server {
+    listen       80;
+    server_name topka.cn  u.topka.cn uc.topka.cn www.topka.cn;
+    root /data/website/web/www;
+
+    index  index.html index.htm index.php;
+    access_log  /var/log/nginx/topka/topka.cn.access.log main;
+    error_log  off;#/var/log/nginx/topka/topka.cn.error.log;
+
+    error_page  400 401 402 403   http://topka.cn/400.html;
+    #error_page  404              http://topka.cn/404.html;
+    error_page   500 502 503 504  http://topka.cn/500.html;
+    proxy_intercept_errors on;
+    rewrite ^/dealer/(.*)$	http://dealer.topka.cn	permanent;
+    if ($host = "www.topka.cn") {
+		rewrite ^/(.*)$ http://topka.cn/$1 permanent;
+	}
+    #if ($host = "topka.cn") {
+	#	rewrite ^/(.*)$ http://www.topka.cn/$1 permanent;
+	#}
+	proxy_next_upstream error timeout invalid_header http_500 http_502 http_503 http_504;
+    location = / {
+	    proxy_pass http://topka_ruby;
+#	    proxy_redirect off;
+    }
+    location ^~ /cars/ {
+	    proxy_pass http://topka_ruby;
+#	    error_page 404 = @ipa_not_rewrite;
+	    error_page 404 = http://topka.cn/404.html;
+#	    proxy_redirect off;
+    }
+    location ^~ /assets/css/ {
+	proxy_set_header X-Real-IP $http_x_forwarded_for;
+        proxy_pass http://api.topka.cn;
+        }
+    location ^~ /assets/js/ {
+        proxy_set_header X-Real-IP $http_x_forwarded_for;
+        proxy_pass http://api.topka.cn;
+        }
+    location ^~ /assets/fonts/ {
+        proxy_set_header X-Real-IP $http_x_forwarded_for;
+        proxy_pass http://api.topka.cn;
+        }
+    location ^~ /assets/images/ {
+        proxy_set_header X-Real-IP $http_x_forwarded_for;
+        proxy_pass http://api.topka.cn;
+        }
+    location ^~ /assets/ {
+		alias /data/website/rails/current/public/assets/;
+		break;
+	}
+    location ^~ /regions/ {
+	    proxy_pass http://topka_ruby;
+	    proxy_redirect off;
+	}
+    location ^~ /rails/ {
+	    proxy_pass http://topka_ruby;
+	    proxy_redirect off;
+	}
+    location ^~ /templates/ {
+	    proxy_pass http://topka_ruby;
+	    proxy_redirect off;
+	}
+    location ^~ /newrelic/ {
+	    proxy_pass http://topka_ruby;
+	    proxy_redirect off;
+	}
+    location ^~ /upload/ {
+	    proxy_pass http://topka_ruby;
+	    proxy_redirect off;
+	}
+    location ^~ /users/ {
+	    proxy_pass http://topka_ruby;
+	    proxy_redirect off;
+	}
+    location ^~  /nimda/ {
+	    proxy_pass http://topka_ruby;
+	    #proxy_redirect off;
+	}
+    location ^~ /ipa/ {
+	    proxy_pass http://topka_ruby;
+	    error_page 404 = @ipa_not_rewrite;
+	    #proxy_redirect off;
+	}
+#20141103 by yangyong
+    location ^~ /quote/ {
+	    proxy_set_header X-Real-IP $http_x_forwarded_for;
+            proxy_pass http://api.topka.cn;
+        }
+#20150119 yangyong
+    location ^~ /s/ {
+		proxy_pass http://api.topka.cn/s/;
+	    break;
+    }
+#
+    location @ipa_not_rewrite {
+	    proxy_pass http://topka_ruby;
+	}
+    location ^~ /clubs/ {
+	proxy_set_header X-Real-IP $http_x_forwarded_for;
+    	proxy_pass http://p.topka.cn;
+	}
+#20141031 by yangyong
+    location ^~ /ads/ {
+	proxy_set_header X-Real-IP $http_x_forwarded_for;
+        proxy_pass http://api.topka.cn;
+        }
+    location ^~ /apps2/ {
+	proxy_set_header X-Real-IP $http_x_forwarded_for;
+        proxy_pass http://api.topka.cn;
+        }
+#end
+    location ^~ /sigup/ {
+        fastcgi_pass unix:/dev/shm/php-fpm.socket;
+        fastcgi_index index.php;
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 64 256k;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+	}
+
+    location ~* \.(gif|png|bmp|swf|jpg|jpeg|ico)?$ {
+        expires 30d;
+    }
+   error_page 404  = @topka_php;
+   location @topka_php {
+       proxy_set_header X-Real-IP $http_x_forwarded_for;
+       proxy_pass http://p.topka.cn;
+#       proxy_set_header X-Real-IP	$http_x_forwarded_for;
+#       proxy_set_header X-Forwarded-For	$http_x_forwarded_for;
+#       proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+#       proxy_set_header Host $host;
+#	proxy_redirect off;
+   }
+}
+server {
+    listen       80;
+    server_name php.topka.cn p.topka.cn static.topka.cn;
+    root /data/website/web/www;
+    index  index.php index.html;
+    access_log  /var/log/nginx/topka/p.topka.cn.access.log main;
+    error_log  /var/log/nginx/topka/p.topka.cn.error.log;
+
+    error_page  404              http://topka.cn/404.html;
+    error_page   500 502 503 504  http://topka.cn/500.html;
+##proxy_pass seting
+    proxy_set_header X-Real-IP	$http_x_forwarded_for;
+    proxy_set_header X-Forwarded-For	$proxy_add_x_forwarded_for;
+    proxy_set_header Host $host;
+    proxy_redirect off;
+    set_real_ip_from 119.254.108.43;
+    set_real_ip_from 10.80.17.99;
+    real_ip_header	X-Real-IP;
+
+#########2014-06-24
+
+    if (!-e $request_filename) {
+            rewrite (^/global/tb/.*(\.jpeg|\.gif|\.jpg|\.bmp|\.png)$) /process_image.php?file=$1 break;
+            rewrite /.* /index.php break;
+    }
+    location ~* .(eot|ttf|woff|svg)$ {
+        add_header Access-Control-Allow-Origin *;
+    }
+
+    location ~ \.(js|css)?$ {
+        expires 1d;
+    }
+
+    location ~* \.(gif|png|bmp|swf|jpg|jpeg|ico)?$ {
+        expires 30d;
+    }
+#20141031 by yangyong
+    location ^~ /assets/ {
+	proxy_set_header X-Real-IP $http_x_forwarded_for;
+        proxy_pass http://api.topka.cn;
+        }
+#end
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/dev/shm/php-fpm.socket;
+        fastcgi_index index.php;
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 64 256k;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}
+
+server {
+    listen       80;
+    server_name admin.topka.cn;
+    root /data/website/admin;
+    index  index.html index.php;
+    access_log off;
+    error_log off;
+
+    location / {
+        index  index.html index.php;
+    }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/dev/shm/php-fpm.socket;
+        fastcgi_index index.php;
+        fastcgi_buffer_size 128k;
+        fastcgi_buffers 64 256k;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
+    }
+}

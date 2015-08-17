@@ -1,0 +1,5 @@
+##php pillar examples
+php:
+  use_ppa: True
+  ppa_name: 'ondrej/php5'
+

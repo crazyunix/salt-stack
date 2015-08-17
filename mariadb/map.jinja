@@ -1,0 +1,21 @@
+{% set mysql = salt['grains.filter_by']({
+    'Debian': {
+        'mysql_pkg': 'mariadb-server',
+        'mysql_dev': 'mariadb-dev',
+        'client_pkg': 'mariadb-client',
+        'libclient_pkg': 'libmariadbclient18',
+        'mariadb_repo': 'apt-source',
+        'service_server': 'mariadb-server',
+        'pkg_python': 'python-mysqldb',
+    },
+    'RedHat': {
+        'mysql_pkg': 'MariaDB-server',
+        'mysql_dev': 'MariaDB-devel',
+        'client_pkg': 'MariaDB-client',
+        'libclient_pkg': 'libmariadbclient18',
+        'mariadb_repo': '/etc/yum.repos.d/mariadb.repo',
+        'service_server': 'mariadb',
+        'pkg_python': 'MySQL-python',
+    },
+
+},merge=salt['pillar.get']('mysql:lookup')) %}

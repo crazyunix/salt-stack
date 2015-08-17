@@ -1,0 +1,10 @@
+{% set nvm = salt['grains.filter_by']({
+    'Debian':{
+        'version':'v0.12.2',
+        },
+    'RedHat':{
+        'version':'v0.12.2',
+        },
+    },merge=salt['pillar.get']('nvm:lookup'))
+
+%}

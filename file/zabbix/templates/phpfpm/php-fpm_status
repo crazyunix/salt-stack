@@ -1,0 +1,8 @@
+UserParameter=idle.processe,/etc/zabbix/bin/bin/php-fpm_status.sh idle
+UserParameter=total.processes,/etc/zabbix/bin/bin/php-fpm_status.sh total
+UserParameter=active.processes,/etc/zabbix/bin/bin/php-fpm_status.sh active
+UserParameter=max.active.processes,/etc/zabbix/bin/bin/php-fpm_status.sh mactive
+UserParameter=listen.queue.len,/etc/zabbix/bin/bin/php-fpm_status.sh listenqueuelen
+UserParameter=listen.queue,/etc/zabbix/bin/bin/php-fpm_status.sh listenqueue
+UserParameter=start.since,/etc/zabbix/bin/bin/php-fpm_status.sh since
+UserParameter=accepted.conn,/etc/zabbix/bin/bin/php-fpm_status.sh conn

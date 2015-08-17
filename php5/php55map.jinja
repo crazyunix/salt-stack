@@ -1,0 +1,10 @@
+{% set php55 = salt['grains.filter_by']({
+    'RedHat':{
+        'php_ini': '/opt/remi/php55/root/etc/php.ini',
+        'php_phpd': '/etc/php.d',
+        'fpm_service': 'php55-php-fpm',
+        'php55d': '/opt/remi/php55/root/etc/php.d',
+        'fpm_conf': '/opt/remi/php55/root/etc/php-fpm.conf',
+        'fpm_confd': '/opt/remi/php55/root/etc/php-fpm.d',
+        },
+},merge=salt['pillar.get']('php55:lookup')) %}

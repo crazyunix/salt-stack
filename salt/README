@@ -3,3 +3,6 @@
 curl -SsL https://raw.githubusercontent.com/crazyunix/salt-stack/master/install.sh | bash -s xx.xx.xx.xx
 
 #XX.XX.XX.XX 为salt-server地址。
+#
+#OR
+curl -s https://raw.githubusercontent.com/crazyunix/salt-stack/master/install.sh | bash -x /dev/stdin XXXXXX.xxxx.xxx.xxx
